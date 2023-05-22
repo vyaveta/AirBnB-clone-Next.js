@@ -5,7 +5,14 @@ import { Logo } from './Logo'
 import { Search } from './Search'
 import { UserMenu } from './UserMenu'
 
-const Navbar = () => {
+import { SafeUser } from '@/app/types'
+
+interface NavbarProps {
+  currentUser?: SafeUser | null
+}
+
+const Navbar: React.FC<NavbarProps> = ({currentUser}) => {
+  console.log(currentUser,'is the current user that we got from the Navbar component')
   return (
     <div className='w-full fixed bg-white z-10 shadow-sm' >
         <div className='py-4 border-b-[1px]'>
@@ -13,7 +20,7 @@ const Navbar = () => {
             <div className='flex flex-row items-center justify-between gap-3 md:gap-0' >
                 <Logo />
                 <Search />
-                <UserMenu />
+                <UserMenu currentUser={currentUser} />
             </div>
            </Container>
         </div>

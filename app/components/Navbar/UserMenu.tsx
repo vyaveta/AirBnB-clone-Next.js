@@ -1,30 +1,43 @@
 "use client";
-import {AiOutlineMenu} from 'react-icons/ai'
+import { AiOutlineMenu } from 'react-icons/ai'
 import { Avatar } from '../Avatar';
 import { useCallback, useState } from 'react';
 import { MenuItem } from './MenuItem';
-export const UserMenu: () => JSX.Element = () => {
+import { useRegisterModal } from '@/app/hooks/useRegisterModal';
+import { useLoginModal } from '@/app/hooks/useLoginModal';
 
-    const [isOpen,setIsOpen] = useState<boolean>(false)
+import {signOut} from 'next-auth/react'
+import { SafeUser } from '@/app/types';
+
+interface UserMenuProps {
+    currentUser?: SafeUser | null
+}
+
+export const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
+
+    const registerModal = useRegisterModal()
+    const loginModal = useLoginModal()
+
+    const [isOpen, setIsOpen] = useState<boolean>(false)
 
     const toggleOpen = useCallback(() => {
         setIsOpen((value) => !value)
-    },[])
+    }, [])
 
-    return(
+    return (
         <div className="relative">
             <div className="flex flex-row items-center gap-3">
                 <div
-                onClick={() => {}}
-                className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full transition cursor-pointer hover:bg-neutral-100">
+                    onClick={() => { }}
+                    className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full transition cursor-pointer hover:bg-neutral-100">
                     Airbnb your home
                 </div>
                 <div
-                onClick={toggleOpen}
-                className="p-4 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 cursor-pointer hover:shadow-md transition rounded-full " >
+                    onClick={toggleOpen}
+                    className="p-4 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 cursor-pointer hover:shadow-md transition rounded-full " >
                     <AiOutlineMenu />
                     <div className="hidden md:block">
-                        <Avatar />
+                        <Avatar src={currentUser?.image} />
                     </div>
                 </div>
             </div>
@@ -32,10 +45,23 @@ export const UserMenu: () => JSX.Element = () => {
                 isOpen && (
                     <div className='absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm'>
                         <div className='flex flex-col cursor-pointer'>
-                            <>
-                                <MenuItem onClick={() => {}} label='Login' />
-                                <MenuItem onClick={() => {}} label='Signup' />
-                            </>
+                            {
+                                currentUser ? (
+                                    <>
+                                        <MenuItem onClick={() => {  }} label='My trips' />
+                                        <MenuItem onClick={() => {  }} label='My favorites' />
+                                        <MenuItem onClick={() => {  }} label='My reservations' />
+                                        <MenuItem onClick={() => {  }} label='My properties' />
+                                        <MenuItem onClick={() => {  }} label='Airbnb my home' />
+                                        <hr />
+                                        <MenuItem onClick={() => { signOut() }} label='Log out' />
+                                    </>
+                                ) :
+                                    <>
+                                        <MenuItem onClick={() => { loginModal.onOpen() }} label='Login' />
+                                        <MenuItem onClick={() => { registerModal.onOpen() }} label='Signup' />
+                                    </>
+                            }
                         </div>
                     </div>
                 )
