@@ -1,5 +1,5 @@
 "use client"
-import {useState} from 'react'
+import {useCallback, useState} from 'react'
 import {signIn} from 'next-auth/react'
 
 import { AiFillGithub } from "react-icons/ai"
@@ -37,7 +37,12 @@ export const LoginModal = () => {
 
     const [loading,setLoading]  = useState(false)
 
-    const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    const toggle = useCallback(() => {
+        loginModal.onClose()
+        registerModal.onOpen()
+    },[loginModal,registerModal])
+
+    const onSubmit: SubmitHandler<FieldValues> = (data) => { 
         setLoading(true)
         signIn('credentials',{
             ...data,
@@ -103,7 +108,7 @@ export const LoginModal = () => {
                         Dont have an Account?
                     </div>
                     <div
-                    onClick={() => loginModal.onClose()}
+                    onClick={toggle}
                     className='text-neutral-800 cursor-pointer hover:underline font-semibold' >
                        sign up
                     </div>

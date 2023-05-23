@@ -1,5 +1,5 @@
 "use client"
-import {useState} from 'react'
+import {useCallback, useState} from 'react'
 import {signIn} from 'next-auth/react'
 
 import { AiFillGithub } from "react-icons/ai"
@@ -20,6 +20,7 @@ import Modal from './Modal'
 import Heading from '../Heading'
 import Input from '../Inputs/Input'
 import { Button } from '../Button'
+import { useLoginModal } from '@/app/hooks/useLoginModal'
 
 export const RegisterModal = () => {
 
@@ -32,6 +33,12 @@ export const RegisterModal = () => {
     })
 
     const registerModal = useRegisterModal()
+    const loginModal = useLoginModal()
+
+    const toggle = useCallback(() => {
+        registerModal.onClose()
+        loginModal.onOpen()
+    },[registerModal,loginModal])
 
     const [loading,setLoading]  = useState(false)
 
@@ -101,7 +108,7 @@ export const RegisterModal = () => {
                         Already have an Account?
                     </div>
                     <div
-                    onClick={() => registerModal.onClose()}
+                    onClick={toggle}
                     className='text-neutral-800 cursor-pointer hover:underline font-semibold' >
                        Log in
                     </div>
